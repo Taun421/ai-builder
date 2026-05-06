@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Automation Dashboard — AI Builder</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:wght@300;400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --color-bg-deep:      #001D2F;
+      --color-bg-mid:       #06314C;
+      --color-accent:       #E0581C;
+      --color-accent-hover: #F07840;
+      --color-surface:      #F5F2ED;
+      --color-white:        #FFFFFF;
+      --color-text-dark:    #001D2F;
+      --color-text-muted:   rgba(255,255,255,0.65);
+      --color-border:       rgba(255,255,255,0.15);
+      --pad-h:    64px;
+      --pad-v-sm: 80px;
+      --pad-v-lg: 120px;
+      --max-width: 1400px;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      line-height: 1.7;
+      color: var(--color-white);
+      background: var(--color-bg-deep);
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ─────────────────────────────────── */
+    .header {
+      background: var(--color-bg-deep);
+      border-bottom: 1px solid var(--color-border);
+      padding: 48px var(--pad-h) 40px;
+    }
+
+    .header-inner {
+      max-width: var(--max-width);
+      margin: 0 auto;
+    }
+
+    .eyebrow {
+      display: block;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: var(--color-accent);
+      margin-bottom: 12px;
+    }
+
+    .headline-display {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(52px, 7vw, 88px);
+      line-height: 0.95;
+      color: var(--color-white);
+      letter-spacing: 1px;
+    }
+
+    .divider {
+      width: 48px;
+      height: 3px;
+      background: var(--color-accent);
+      margin: 20px 0 16px;
+    }
+
+    .header-sub {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--color-text-muted);
+      max-width: 480px;
+    }
+
+    /* ── BOARD WRAPPER ───────────────────────────── */
+    .board-section {
+      background: var(--color-bg-mid);
+      min-height: calc(100vh - 200px);
+      padding: 48px var(--pad-h) 80px;
+    }
+
+    .board-inner {
+      max-width: var(--max-width);
+      margin: 0 auto;
+    }
+
+    .board-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      align-items: start;
+    }
+
+    /* ── COLUMNS ─────────────────────────────────── */
+    .column {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .column-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 0 14px 0;
+      border-bottom: 2px solid var(--color-border);
+      margin-bottom: 16px;
+    }
+
+    .column-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: var(--color-text-muted);
+    }
+
+    .column-label.accent { color: var(--color-accent); }
+
+    .column-count {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--color-bg-deep);
+      background: var(--color-text-muted);
+      padding: 2px 8px;
+      min-width: 24px;
+      text-align: center;
+      letter-spacing: 0;
+    }
+
+    .column-count.accent-count {
+      background: var(--color-accent);
+      color: var(--color-white);
+    }
+
+    .drop-zone {
+      flex: 1;
+      min-height: 120px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 8px;
+      transition: outline 0.15s, background 0.15s;
+    }
+
+    .drop-zone.drag-over {
+      outline: 2px solid var(--color-accent);
+      outline-offset: -2px;
+      background: rgba(224, 88, 28, 0.04);
+    }
+
+    /* Suggested column — muted/grey treatment */
+    .col-suggested .column-header {
+      border-bottom-color: rgba(255,255,255,0.08);
+    }
+
+    .col-suggested .drop-zone {
+      border: 1px dashed rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.02);
+      min-height: 180px;
+    }
+
+    .col-suggested .drop-zone.drag-over {
+      outline: 2px solid rgba(255,255,255,0.25);
+      background: rgba(255,255,255,0.04);
+    }
+
+    .empty-hint {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 400;
+      color: rgba(255,255,255,0.2);
+      text-align: center;
+      padding: 32px 16px;
+      letter-spacing: 0.5px;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    /* ── CARDS ───────────────────────────────────── */
+    .kanban-card {
+      background: var(--color-bg-deep);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 20px 20px 18px;
+      cursor: grab;
+      transition: border-color 0.15s, box-shadow 0.15s, opacity 0.15s;
+      user-select: none;
+    }
+
+    .kanban-card:hover {
+      border-color: rgba(255,255,255,0.22);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.35);
+    }
+
+    .kanban-card:active { cursor: grabbing; }
+
+    .kanban-card.dragging {
+      opacity: 0.35;
+    }
+
+    /* Cards in the suggested column get a muted overlay */
+    .col-suggested .kanban-card {
+      background: rgba(255,255,255,0.04);
+      border-color: rgba(255,255,255,0.08);
+    }
+
+    .col-suggested .kanban-card:hover {
+      border-color: rgba(255,255,255,0.15);
+    }
+
+    .card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .priority-badge {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      padding: 3px 8px;
+    }
+
+    .priority-high {
+      background: rgba(224,88,28,0.15);
+      color: var(--color-accent);
+      border: 1px solid rgba(224,88,28,0.3);
+    }
+
+    .priority-medium {
+      background: rgba(180,130,0,0.12);
+      color: #c9960a;
+      border: 1px solid rgba(180,130,0,0.25);
+    }
+
+    .priority-low {
+      background: rgba(255,255,255,0.05);
+      color: rgba(255,255,255,0.4);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .drag-handle {
+      display: flex;
+      gap: 3px;
+      align-items: center;
+      opacity: 0.2;
+    }
+
+    .drag-handle span {
+      display: block;
+      width: 3px;
+      height: 3px;
+      background: var(--color-white);
+      border-radius: 50%;
+    }
+
+    .kanban-card:hover .drag-handle { opacity: 0.5; }
+
+    .card-name {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-white);
+      line-height: 1.35;
+      margin-bottom: 7px;
+    }
+
+    .card-desc {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--color-text-muted);
+      line-height: 1.5;
+    }
+
+    /* Done column — cards get a subtle green left accent */
+    .col-done .kanban-card {
+      border-left: 3px solid rgba(5,150,105,0.5);
+    }
+
+    .col-done .card-name { color: rgba(255,255,255,0.75); }
+
+    /* In Progress — subtle orange left accent */
+    .col-inprogress .kanban-card {
+      border-left: 3px solid rgba(224,88,28,0.5);
+    }
+
+    /* ── FOOTER ──────────────────────────────────── */
+    .footer {
+      background: var(--color-bg-deep);
+      border-top: 1px solid var(--color-border);
+      padding: 24px var(--pad-h);
+      text-align: center;
+    }
+
+    .footer-text {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 400;
+      color: rgba(255,255,255,0.2);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    /* ── DRAG INDICATOR ─────────────────────────── */
+    .drag-indicator {
+      height: 2px;
+      background: var(--color-accent);
+      margin: 0;
+      pointer-events: none;
+      flex-shrink: 0;
+    }
+
+    /* ── MODAL ───────────────────────────────────── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.72);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: var(--color-bg-deep);
+      border: 1px solid var(--color-border);
+      width: min(580px, 92vw);
+      max-height: 88vh;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      padding: 28px 28px 20px;
+      border-bottom: 1px solid var(--color-border);
+      gap: 16px;
+    }
+
+    .modal-eyebrow {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 10px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: var(--color-accent);
+      margin-bottom: 6px;
+    }
+
+    .modal-title-text {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--color-white);
+      line-height: 1.3;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--color-text-muted);
+      font-size: 20px;
+      cursor: pointer;
+      padding: 0;
+      line-height: 1;
+      flex-shrink: 0;
+      margin-top: 2px;
+      transition: color 0.15s;
+    }
+
+    .modal-close:hover { color: var(--color-white); }
+
+    .modal-body {
+      padding: 24px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .modal-field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .modal-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--color-text-muted);
+    }
+
+    .modal-input {
+      background: #06314C;
+      border: 1px solid rgba(255,255,255,0.15);
+      color: var(--color-white);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 400;
+      padding: 10px 12px;
+      width: 100%;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .modal-input:focus { border-color: var(--color-accent); }
+
+    .modal-textarea {
+      resize: vertical;
+      min-height: 120px;
+      line-height: 1.6;
+    }
+
+    .priority-segmented {
+      display: flex;
+      gap: 0;
+    }
+
+    .priority-segmented button {
+      flex: 1;
+      padding: 9px 12px;
+      background: #06314C;
+      border: 1px solid rgba(255,255,255,0.15);
+      border-right: none;
+      color: var(--color-text-muted);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .priority-segmented button:last-child { border-right: 1px solid rgba(255,255,255,0.15); }
+
+    .priority-segmented button.active-high {
+      background: rgba(224,88,28,0.2);
+      color: var(--color-accent);
+      border-color: rgba(224,88,28,0.4);
+    }
+
+    .priority-segmented button.active-medium {
+      background: rgba(180,130,0,0.15);
+      color: #c9960a;
+      border-color: rgba(180,130,0,0.35);
+    }
+
+    .priority-segmented button.active-low {
+      background: rgba(255,255,255,0.07);
+      color: var(--color-white);
+      border-color: rgba(255,255,255,0.25);
+    }
+
+    .modal-footer {
+      display: flex;
+      gap: 12px;
+      padding: 20px 28px 28px;
+      border-top: 1px solid var(--color-border);
+    }
+
+    .btn-primary {
+      display: inline-block;
+      padding: 12px 28px;
+      background: var(--color-accent);
+      border: 2px solid var(--color-accent);
+      color: var(--color-white);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .btn-primary:hover { background: var(--color-accent-hover); border-color: var(--color-accent-hover); }
+
+    .btn-ghost {
+      display: inline-block;
+      padding: 12px 28px;
+      background: transparent;
+      border: 2px solid rgba(255,255,255,0.2);
+      color: var(--color-text-muted);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .btn-ghost:hover { border-color: rgba(255,255,255,0.4); color: var(--color-white); }
+
+    .card-notes-preview {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      color: rgba(255,255,255,0.3);
+      margin-top: 6px;
+      font-style: italic;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* ── RESPONSIVE ──────────────────────────────── */
+    @media (max-width: 1100px) {
+      .board-grid { grid-template-columns: repeat(2, 1fr); }
+      :root { --pad-h: 40px; }
+    }
+
+    @media (max-width: 640px) {
+      .board-grid { grid-template-columns: 1fr; }
+      :root { --pad-h: 24px; }
+      .header { padding: 36px 24px 32px; }
+      .board-section { padding: 32px 24px 60px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── HEADER ──────────────────────────────────────────── -->
+  <header class="header">
+    <div class="header-inner">
+      <span class="eyebrow">AI Builder &middot; Sprint 1</span>
+      <h1 class="headline-display">Automation Dashboard</h1>
+      <div class="divider"></div>
+      <p class="header-sub">Drag cards across columns to track progress. State saves automatically.</p>
+    </div>
+  </header>
+
+  <!-- ── BOARD ───────────────────────────────────────────── -->
+  <main class="board-section">
+    <div class="board-inner">
+      <div class="board-grid">
+
+        <!-- SUGGESTED -->
+        <div class="column col-suggested" id="col-suggested">
+          <div class="column-header">
+            <span class="column-label">Suggested</span>
+            <span class="column-count" id="count-suggested">0</span>
+          </div>
+          <div class="drop-zone" id="zone-suggested" data-col="suggested">
+            <div class="empty-hint" id="hint-suggested">Drop ideas here</div>
+          </div>
+        </div>
+
+        <!-- TO BUILD -->
+        <div class="column col-tobuild" id="col-tobuild">
+          <div class="column-header">
+            <span class="column-label accent">To Build</span>
+            <span class="column-count accent-count" id="count-tobuild">0</span>
+          </div>
+          <div class="drop-zone" id="zone-tobuild" data-col="tobuild">
+          </div>
+        </div>
+
+        <!-- IN PROGRESS -->
+        <div class="column col-inprogress" id="col-inprogress">
+          <div class="column-header">
+            <span class="column-label">In Progress</span>
+            <span class="column-count" id="count-inprogress">0</span>
+          </div>
+          <div class="drop-zone" id="zone-inprogress" data-col="inprogress">
+          </div>
+        </div>
+
+        <!-- DONE -->
+        <div class="column col-done" id="col-done">
+          <div class="column-header">
+            <span class="column-label">Done</span>
+            <span class="column-count" id="count-done">0</span>
+          </div>
+          <div class="drop-zone" id="zone-done" data-col="done">
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- ── MODAL ───────────────────────────────────────────── -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal" id="modal" role="dialog" aria-modal="true">
+      <div class="modal-header">
+        <div>
+          <div class="modal-eyebrow">Edit Card</div>
+          <div class="modal-title-text" id="modal-heading">Card Name</div>
+        </div>
+        <button class="modal-close" id="modal-close" aria-label="Close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-field">
+          <label class="modal-label" for="modal-priority-input">Priority</label>
+          <div class="priority-segmented" id="modal-priority-btns">
+            <button type="button" data-val="High">High</button>
+            <button type="button" data-val="Medium">Medium</button>
+            <button type="button" data-val="Low">Low</button>
+          </div>
+        </div>
+        <div class="modal-field">
+          <label class="modal-label" for="modal-name">Name</label>
+          <input class="modal-input" id="modal-name" type="text" placeholder="Automation name">
+        </div>
+        <div class="modal-field">
+          <label class="modal-label" for="modal-desc">One-line description</label>
+          <input class="modal-input" id="modal-desc" type="text" placeholder="What does this automation do?">
+        </div>
+        <div class="modal-field">
+          <label class="modal-label" for="modal-notes">Scope &amp; Notes</label>
+          <textarea class="modal-input modal-textarea" id="modal-notes" placeholder="Add context, requirements, links, next steps…"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-primary" id="modal-save">Save</button>
+        <button class="btn-ghost" id="modal-cancel">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── FOOTER ──────────────────────────────────────────── -->
+  <footer class="footer">
+    <p class="footer-text">AI Builder &middot; Automation Roadmap &middot; Sprint 1</p>
+  </footer>
+
+  <script>
+    // ── NOTION BACKEND ─────────────────────────────────────
+
+    const NOTES_KEY = 'ai-builder-notes';
+
+    const COL_TO_STATUS = {
+      suggested: 'Suggested', tobuild: 'To Build',
+      inprogress: 'In Progress', done: 'Done'
+    };
+    const STATUS_TO_COL = {
+      'Suggested': 'suggested', 'To Build': 'tobuild',
+      'In Progress': 'inprogress', 'Done': 'done'
+    };
+
+    let cardData = {};
+
+    // ── NOTES (localStorage only) ──────────────────────────
+    function loadNotes() {
+      try { return JSON.parse(localStorage.getItem(NOTES_KEY)) || {}; } catch { return {}; }
+    }
+    function saveNotes() {
+      const notes = {};
+      Object.entries(cardData).forEach(([id, d]) => { if (d.notes) notes[id] = d.notes; });
+      localStorage.setItem(NOTES_KEY, JSON.stringify(notes));
+    }
+
+    // ── API ────────────────────────────────────────────────
+    async function fetchRoadmap() {
+      const res = await fetch('/api/roadmap');
+      if (!res.ok) throw new Error(`API ${res.status}`);
+      return res.json();
+    }
+    async function patchStatus(id, status) {
+      const res = await fetch('/api/roadmap', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, status }),
+      });
+      if (!res.ok) throw new Error(`PATCH ${res.status}`);
+    }
+
+    // ── HELPERS ────────────────────────────────────────────
+    function priorityClass(p) {
+      if (p === 'High') return 'priority-high';
+      if (p === 'Medium') return 'priority-medium';
+      return 'priority-low';
+    }
+
+    function refreshCardDOM(id) {
+      const d = cardData[id];
+      const el = document.querySelector(`[data-card-id="${id}"]`);
+      if (!el) return;
+      el.querySelector('.priority-badge').textContent = d.priority;
+      el.querySelector('.priority-badge').className = `priority-badge ${priorityClass(d.priority)}`;
+      el.querySelector('.card-name').textContent = d.name;
+      el.querySelector('.card-desc').textContent = d.description;
+      const preview = el.querySelector('.card-notes-preview');
+      if (d.notes && d.notes.trim()) {
+        preview.textContent = d.notes.trim();
+        preview.style.display = 'block';
+      } else {
+        preview.style.display = 'none';
+      }
+    }
+
+    // ── DRAG INDICATOR ─────────────────────────────────────
+    const indicator = document.createElement('div');
+    indicator.className = 'drag-indicator';
+
+    function getInsertBefore(zone, y) {
+      const cards = [...zone.querySelectorAll('.kanban-card:not(.dragging)')];
+      for (const card of cards) {
+        const rect = card.getBoundingClientRect();
+        if (y < rect.top + rect.height / 2) return card;
+      }
+      return null;
+    }
+
+    // ── BUILD CARD ─────────────────────────────────────────
+    function buildCard(id) {
+      const d = cardData[id];
+      const el = document.createElement('div');
+      el.className = 'kanban-card';
+      el.setAttribute('draggable', 'true');
+      el.dataset.cardId = id;
+      el.innerHTML = `
+        <div class="card-top">
+          <span class="priority-badge ${priorityClass(d.priority)}">${d.priority}</span>
+          <div class="drag-handle"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+        </div>
+        <div class="card-name">${d.name}</div>
+        <div class="card-desc">${d.description}</div>
+        <div class="card-notes-preview" style="display:${d.notes && d.notes.trim() ? 'block' : 'none'}">${d.notes || ''}</div>
+      `;
+
+      el.addEventListener('dragstart', (e) => {
+        e.dataTransfer.setData('text/plain', id);
+        e.dataTransfer.effectAllowed = 'move';
+        setTimeout(() => el.classList.add('dragging'), 0);
+      });
+      el.addEventListener('dragend', () => {
+        el.classList.remove('dragging');
+        indicator.remove();
+        document.querySelectorAll('.drop-zone').forEach(z => z.classList.remove('drag-over'));
+      });
+
+      let downX, downY;
+      el.addEventListener('pointerdown', (e) => { downX = e.clientX; downY = e.clientY; });
+      el.addEventListener('click', (e) => {
+        const dx = e.clientX - downX, dy = e.clientY - downY;
+        if (Math.sqrt(dx*dx + dy*dy) < 6) openModal(id);
+      });
+
+      return el;
+    }
+
+    // ── MODAL ──────────────────────────────────────────────
+    let activeCardId = null;
+    const overlay = document.getElementById('modal-overlay');
+    const modalHeading = document.getElementById('modal-heading');
+    const modalName = document.getElementById('modal-name');
+    const modalDesc = document.getElementById('modal-desc');
+    const modalNotes = document.getElementById('modal-notes');
+    const priorityBtns = document.getElementById('modal-priority-btns');
+
+    function openModal(id) {
+      activeCardId = id;
+      const d = cardData[id];
+      modalHeading.textContent = d.name;
+      modalName.value = d.name;
+      modalDesc.value = d.description;
+      modalNotes.value = d.notes || '';
+      setPriorityBtn(d.priority);
+      overlay.classList.add('open');
+      modalName.focus();
+    }
+
+    function closeModal() {
+      overlay.classList.remove('open');
+      activeCardId = null;
+    }
+
+    function setPriorityBtn(val) {
+      priorityBtns.querySelectorAll('button').forEach(btn => {
+        btn.className = btn.dataset.val === val ? `active-${val.toLowerCase()}` : '';
+      });
+    }
+
+    priorityBtns.addEventListener('click', (e) => {
+      const btn = e.target.closest('button');
+      if (btn) setPriorityBtn(btn.dataset.val);
+    });
+
+    document.getElementById('modal-save').addEventListener('click', () => {
+      if (!activeCardId) return;
+      const activePriorityBtn = priorityBtns.querySelector('button[class^="active"]');
+      cardData[activeCardId] = {
+        ...cardData[activeCardId],
+        name: modalName.value.trim() || cardData[activeCardId].name,
+        description: modalDesc.value.trim(),
+        priority: activePriorityBtn ? activePriorityBtn.dataset.val : cardData[activeCardId].priority,
+        notes: modalNotes.value,
+      };
+      refreshCardDOM(activeCardId);
+      saveNotes();
+      closeModal();
+    });
+
+    document.getElementById('modal-cancel').addEventListener('click', closeModal);
+    document.getElementById('modal-close').addEventListener('click', closeModal);
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+    // ── COUNTS ─────────────────────────────────────────────
+    function updateCounts() {
+      ['suggested', 'tobuild', 'inprogress', 'done'].forEach(col => {
+        const zone = document.getElementById('zone-' + col);
+        const count = zone.querySelectorAll('.kanban-card').length;
+        document.getElementById('count-' + col).textContent = count;
+        if (col === 'suggested') {
+          const hint = document.getElementById('hint-suggested');
+          if (hint) hint.style.display = count > 0 ? 'none' : 'block';
+        }
+      });
+    }
+
+    // ── INIT ───────────────────────────────────────────────
+    async function initBoard() {
+      const savedNotes = loadNotes();
+      let rows;
+      try {
+        rows = await fetchRoadmap();
+      } catch (err) {
+        document.querySelector('.board-section').innerHTML = `
+          <div style="text-align:center;padding:80px 24px;color:rgba(255,255,255,0.4);font-family:'DM Sans',sans-serif;font-size:14px;">
+            Could not reach <code style="color:rgba(255,255,255,0.6)">/api/roadmap</code>.<br>
+            Make sure <code style="color:rgba(255,255,255,0.6)">vercel dev</code> is running.
+          </div>`;
+        return;
+      }
+
+      rows.forEach(row => {
+        cardData[row.id] = { ...row, notes: savedNotes[row.id] || '' };
+      });
+
+      const zones = {};
+      document.querySelectorAll('.drop-zone').forEach(zone => {
+        zones[zone.dataset.col] = zone;
+
+        zone.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = 'move';
+          zone.classList.add('drag-over');
+          const after = getInsertBefore(zone, e.clientY);
+          if (after) zone.insertBefore(indicator, after);
+          else zone.appendChild(indicator);
+        });
+
+        zone.addEventListener('dragleave', (e) => {
+          if (!zone.contains(e.relatedTarget)) {
+            zone.classList.remove('drag-over');
+            if (indicator.parentNode === zone) indicator.remove();
+          }
+        });
+
+        zone.addEventListener('drop', async (e) => {
+          e.preventDefault();
+          zone.classList.remove('drag-over');
+          const cardId = e.dataTransfer.getData('text/plain');
+          const card = document.querySelector(`[data-card-id="${cardId}"]`);
+          if (card) {
+            if (indicator.parentNode === zone) zone.insertBefore(card, indicator);
+            else zone.appendChild(card);
+            const newStatus = COL_TO_STATUS[zone.dataset.col];
+            if (cardData[cardId] && cardData[cardId].status !== newStatus) {
+              cardData[cardId].status = newStatus;
+              patchStatus(cardId, newStatus).catch(err => console.error('PATCH failed:', err));
+            }
+          }
+          indicator.remove();
+          updateCounts();
+        });
+      });
+
+      rows.forEach(row => {
+        const col = STATUS_TO_COL[row.status] || 'tobuild';
+        const zone = zones[col] || zones.tobuild;
+        if (zone) zone.appendChild(buildCard(row.id));
+      });
+
+      updateCounts();
+    }
+
+    initBoard();
+  </script>
+
+</body>
+</html>

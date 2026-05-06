@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Time Audit — Taun Stewart</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #21253a;
+    --border: #2e3347;
+    --accent: #4f8ef7;
+    --accent2: #7c5cbf;
+    --green: #34d399;
+    --yellow: #fbbf24;
+    --red: #f87171;
+    --orange: #fb923c;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --dim: #64748b;
+    --card-shadow: 0 4px 24px rgba(0,0,0,0.4);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, #1a1d27 0%, #16192a 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 40px 48px 36px;
+  }
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.5px;
+  }
+  .header .subtitle {
+    color: var(--muted);
+    font-size: 14px;
+    margin-top: 4px;
+  }
+  .goal-banner {
+    background: linear-gradient(135deg, rgba(79,142,247,0.15), rgba(124,92,191,0.15));
+    border: 1px solid rgba(79,142,247,0.3);
+    border-radius: 12px;
+    padding: 16px 24px;
+    margin-top: 24px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .goal-banner .label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  .goal-banner .goal-text {
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+  }
+  .date-badge {
+    background: rgba(255,255,255,0.08);
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 13px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  /* Nav */
+  .nav {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 48px;
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .nav a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 14px 18px;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .nav a:hover { color: var(--text); border-bottom-color: var(--border); }
+
+  /* Main layout */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 48px 80px;
+  }
+
+  /* Alert banner */
+  .alert {
+    background: rgba(251,191,36,0.08);
+    border: 1px solid rgba(251,191,36,0.25);
+    border-radius: 10px;
+    padding: 14px 20px;
+    margin-bottom: 32px;
+    font-size: 13px;
+    color: var(--yellow);
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .alert .alert-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .alert-list { margin-top: 6px; padding-left: 16px; }
+  .alert-list li { margin-bottom: 3px; }
+
+  /* Section headers */
+  .section { margin-bottom: 56px; }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-number {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .section-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  /* Cards */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    box-shadow: var(--card-shadow);
+  }
+  .card-title {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--dim);
+    margin-bottom: 16px;
+  }
+
+  /* Grid layouts */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  @media (max-width: 800px) {
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .container { padding: 24px 20px 60px; }
+    .nav { padding: 0 20px; }
+    .header { padding: 28px 20px; }
+  }
+
+  /* Stat cards */
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+  }
+  .stat-value {
+    font-size: 32px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.1;
+  }
+  .stat-label {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+  .stat-note {
+    font-size: 11px;
+    color: var(--dim);
+    margin-top: 4px;
+  }
+  .stat-accent { color: var(--accent); }
+  .stat-green { color: var(--green); }
+  .stat-yellow { color: var(--yellow); }
+  .stat-red { color: var(--red); }
+  .stat-orange { color: var(--orange); }
+
+  /* App usage table */
+  .app-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .app-row:last-child { border-bottom: none; }
+  .app-rank {
+    width: 20px;
+    font-size: 12px;
+    color: var(--dim);
+    text-align: center;
+    flex-shrink: 0;
+  }
+  .app-name {
+    font-weight: 600;
+    font-size: 14px;
+    min-width: 120px;
+    flex-shrink: 0;
+  }
+  .app-bar-wrap {
+    flex: 1;
+    background: var(--surface2);
+    border-radius: 4px;
+    height: 6px;
+    overflow: hidden;
+  }
+  .app-bar {
+    height: 100%;
+    border-radius: 4px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+  }
+  .app-desc {
+    font-size: 12px;
+    color: var(--muted);
+    min-width: 160px;
+    text-align: right;
+  }
+
+  /* Category pills */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(79,142,247,0.12);
+    border: 1px solid rgba(79,142,247,0.2);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 12px;
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .pill.green { background: rgba(52,211,153,0.1); border-color: rgba(52,211,153,0.2); color: var(--green); }
+  .pill.yellow { background: rgba(251,191,36,0.1); border-color: rgba(251,191,36,0.2); color: var(--yellow); }
+  .pill.red { background: rgba(248,113,113,0.1); border-color: rgba(248,113,113,0.2); color: var(--red); }
+  .pill.orange { background: rgba(251,146,60,0.1); border-color: rgba(251,146,60,0.2); color: var(--orange); }
+  .pill.purple { background: rgba(124,92,191,0.12); border-color: rgba(124,92,191,0.25); color: #a78bfa; }
+
+  /* Diagnostic items */
+  .diag-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .diag-row:last-child { border-bottom: none; }
+  .diag-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .diag-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .diag-value {
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  /* Observations */
+  .obs-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 24px;
+    margin-bottom: 14px;
+  }
+  .obs-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .obs-number {
+    background: var(--surface2);
+    color: var(--accent);
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .obs-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .obs-body {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.65;
+    padding-left: 34px;
+  }
+
+  /* Goal alignment */
+  .goal-row {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 22px;
+    margin-bottom: 12px;
+  }
+  .goal-row-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .goal-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .goal-alignment-label {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+  .align-strong { background: rgba(52,211,153,0.15); color: var(--green); }
+  .align-partial { background: rgba(251,191,36,0.12); color: var(--yellow); }
+  .align-weak { background: rgba(248,113,113,0.1); color: var(--red); }
+  .align-unknown { background: rgba(100,116,139,0.2); color: var(--dim); }
+  .goal-notes { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+  /* Automation cards */
+  .auto-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 26px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .auto-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+  }
+  .auto-card.quick::before { background: linear-gradient(90deg, var(--green), #059669); }
+  .auto-card.medium::before { background: linear-gradient(90deg, var(--yellow), #d97706); }
+  .auto-card.big::before { background: linear-gradient(90deg, var(--orange), #dc2626); }
+  .auto-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .auto-rank-badge {
+    background: var(--surface2);
+    border-radius: 8px;
+    padding: 3px 10px;
+    font-size: 11px;
+    color: var(--dim);
+    font-weight: 600;
+  }
+  .auto-badges {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .effort-badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 6px;
+  }
+  .effort-quick { background: rgba(52,211,153,0.15); color: var(--green); }
+  .effort-medium { background: rgba(251,191,36,0.12); color: var(--yellow); }
+  .effort-big { background: rgba(251,146,60,0.12); color: var(--orange); }
+  .hours-badge {
+    font-size: 11px;
+    font-weight: 600;
+    background: rgba(79,142,247,0.12);
+    color: var(--accent);
+    padding: 4px 10px;
+    border-radius: 6px;
+  }
+  .auto-outcome {
+    font-size: 17px;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.4;
+    margin-bottom: 18px;
+  }
+  .auto-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  @media (max-width: 700px) { .auto-grid { grid-template-columns: 1fr; } }
+  .auto-field {
+    background: var(--surface2);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .auto-field-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--dim);
+    margin-bottom: 7px;
+  }
+  .auto-field-text {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* Email pattern list */
+  .pattern-list { list-style: none; }
+  .pattern-list li {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--muted);
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .pattern-list li:last-child { border-bottom: none; }
+  .pattern-list li .dot { color: var(--accent); font-size: 16px; line-height: 1; flex-shrink: 0; margin-top: 1px; }
+
+  /* Data sources */
+  .source-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .source-row:last-child { border-bottom: none; }
+  .source-status {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .status-ok { background: var(--green); }
+  .status-blocked { background: var(--red); }
+  .status-missing { background: var(--yellow); }
+  .source-name { font-weight: 600; color: var(--text); min-width: 180px; }
+  .source-detail { color: var(--muted); }
+
+  /* Footer */
+  .footer {
+    border-top: 1px solid var(--border);
+    padding: 24px 48px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--dim);
+  }
+
+  /* Horizontal rule between sub-sections */
+  .sub-divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 24px 0;
+  }
+
+  .tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: rgba(79,142,247,0.1);
+    color: var(--accent);
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+  .tag.draft {
+    background: rgba(100,116,139,0.2);
+    color: var(--dim);
+  }
+
+  /* Browser category bars */
+  .cat-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 0;
+    border-bottom: 1px solid rgba(46,51,71,0.6);
+  }
+  .cat-row:last-child { border-bottom: none; }
+  .cat-name { width: 130px; font-size: 13px; color: var(--text); flex-shrink: 0; }
+  .cat-bar-wrap { flex: 1; background: var(--surface2); border-radius: 4px; height: 8px; overflow: hidden; }
+  .cat-bar { height: 100%; border-radius: 4px; }
+  .cat-count { width: 60px; text-align: right; font-size: 13px; color: var(--muted); flex-shrink: 0; }
+
+  .highlight-box {
+    background: rgba(79,142,247,0.07);
+    border: 1px solid rgba(79,142,247,0.15);
+    border-radius: 10px;
+    padding: 16px 20px;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  strong { color: var(--text); }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-top">
+    <div>
+      <h1>Time Audit — Taun Stewart</h1>
+      <div class="subtitle">Employee Benefits Consultant · GBS Benefits</div>
+    </div>
+    <div class="date-badge">May 4, 2026</div>
+  </div>
+  <div class="goal-banner">
+    <span class="label">#1 Goal</span>
+    <span class="goal-text">Win new clients by delivering innovative tools they can't get elsewhere</span>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="#time">How I Spend My Time</a>
+  <a href="#diagnostics">Key Diagnostics</a>
+  <a href="#goals">Goal Alignment</a>
+  <a href="#automation">Automation Opportunities</a>
+  <a href="#sources">Data Sources</a>
+</nav>
+
+<div class="container">
+
+  <!-- DATA GAPS ALERT -->
+  <div class="alert">
+    <span class="alert-icon">⚠</span>
+    <div>
+      <strong>Data gaps — these sources could not be accessed:</strong>
+      <ul class="alert-list">
+        <li><strong>Mac app usage (knowledgeC.db)</strong> — blocked by macOS permissions. Fix in 2 min: System Settings → Privacy & Security → Full Disk Access → grant Terminal. Reconnect and I can re-run the full app-usage analysis.</li>
+        <li><strong>Work email (taun.stewart@gbsbenefits.com / Outlook)</strong> — client communication, renewal workflows, and quote requests all live here. Not connected.</li>
+        <li><strong>Google Calendar</strong> — meeting load and deep-work ratio are estimated, not measured. Connect via claude.ai → Settings → Connectors.</li>
+        <li><strong>Slack</strong> — not connected (CLAUDE.md confirms no MCP connectors yet).</li>
+      </ul>
+      <div style="margin-top:8px; color: #94a3b8;">Analysis below uses: personal Gmail, Chrome history (sparse), and contextual signals from both.</div>
+    </div>
+  </div>
+
+  <!-- SECTION 1: HOW I SPEND MY TIME -->
+  <div class="section" id="time">
+    <div class="section-header">
+      <div class="section-number">1</div>
+      <div class="section-title">How I Actually Spend My Time</div>
+    </div>
+
+    <!-- Browser Activity -->
+    <div class="card" style="margin-bottom: 20px;">
+      <div class="card-title">Browser Activity — Chrome (Apr 10 – May 3 · 97 visits total)</div>
+      <div class="highlight-box" style="margin-bottom: 20px;">
+        Chrome usage is very sparse. This likely means most work happens in native desktop apps — Outlook, Excel, Teams — not a browser. The one dense day was <strong>April 17</strong> (37 visits, all in the morning), entirely focused on setting up OpenClaw / Clawdbot AI infrastructure.
+      </div>
+
+      <div class="grid-2">
+        <div>
+          <div style="font-size: 12px; font-weight: 600; color: var(--dim); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 14px;">Top Domains</div>
+          <div class="app-row">
+            <div class="app-rank">1</div>
+            <div class="app-name" style="min-width:140px;">myclaw.ai</div>
+            <div class="app-bar-wrap"><div class="app-bar" style="width:100%;"></div></div>
+            <div class="app-desc">9 visits · AI hosting platform</div>
+          </div>
+          <div class="app-row">
+            <div class="app-rank">2</div>
+            <div class="app-name" style="min-width:140px;">google.com</div>
+            <div class="app-bar-wrap"><div class="app-bar" style="width:100%;"></div></div>
+            <div class="app-desc">9 visits · Search</div>
+          </div>
+          <div class="app-row">
+            <div class="app-rank">3</div>
+            <div class="app-name" style="min-width:140px;">youtube.com</div>
+            <div class="app-bar-wrap"><div class="app-bar" style="width:88%;"></div></div>
+            <div class="app-desc">8 visits · Setup tutorials</div>
+          </div>
+          <div class="app-row">
+            <div class="app-rank">4</div>
+            <div class="app-name" style="min-width:140px;">clawdbotai.chat</div>
+            <div class="app-bar-wrap"><div class="app-bar" style="width:66%;"></div></div>
+            <div class="app-desc">6 visits · AI chatbot tool</div>
+          </div>
+          <div class="app-row">
+            <div class="app-rank">5</div>
+            <div class="app-name" style="min-width:140px;">gbsbenefits.com</div>
+            <div class="app-bar-wrap"><div class="app-bar" style="width:22%;"></div></div>
+            <div class="app-desc">2 visits · Company site</div>
+          </div>
+          <div class="app-row">
+            <div class="app-rank">6</div>
+            <div class="app-name" style="min-width:140px;">reddit.com</div>
+            <div class="app-bar-wrap"><div class="app-bar" style="width:22%;"></div></div>
+            <div class="app-desc">2 visits · Reference/research</div>
+          </div>
+          <div class="app-row">
+            <div class="app-rank">7</div>
+            <div class="app-name" style="min-width:140px;">openclaw.ai</div>
+            <div class="app-bar-wrap"><div class="app-bar" style="width:11%;"></div></div>
+            <div class="app-desc">1 visit · AI platform</div>
+          </div>
+        </div>
+        <div>
+          <div style="font-size: 12px; font-weight: 600; color: var(--dim); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 14px;">By Category</div>
+          <div class="cat-row">
+            <div class="cat-name">AI Tools</div>
+            <div class="cat-bar-wrap"><div class="cat-bar" style="width:80%; background: linear-gradient(90deg, #4f8ef7, #7c5cbf);"></div></div>
+            <div class="cat-count">16 visits</div>
+          </div>
+          <div class="cat-row">
+            <div class="cat-name">Search</div>
+            <div class="cat-bar-wrap"><div class="cat-bar" style="width:56%; background: #34d399;"></div></div>
+            <div class="cat-count">9 visits</div>
+          </div>
+          <div class="cat-row">
+            <div class="cat-name">Learning/Video</div>
+            <div class="cat-bar-wrap"><div class="cat-bar" style="width:50%; background: #f87171;"></div></div>
+            <div class="cat-count">8 visits</div>
+          </div>
+          <div class="cat-row">
+            <div class="cat-name">Work/Company</div>
+            <div class="cat-bar-wrap"><div class="cat-bar" style="width:13%; background: #fbbf24;"></div></div>
+            <div class="cat-count">2 visits</div>
+          </div>
+          <div class="cat-row">
+            <div class="cat-name">Research/Other</div>
+            <div class="cat-bar-wrap"><div class="cat-bar" style="width:13%; background: #fb923c;"></div></div>
+            <div class="cat-count">2 visits</div>
+          </div>
+          <div style="margin-top: 16px;" class="highlight-box">
+            <strong>April 17 deep-dive:</strong> An entire morning (8–9am) spent watching YouTube tutorials on OpenClaw and Clawdbot setup, then configuring hosting on MyClaw. This is tool-building investment, not distraction.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Meeting breakdown -->
+    <div class="card" style="margin-bottom: 20px;">
+      <div class="card-title">Meeting Load — Calendar Not Connected</div>
+      <div class="highlight-box">
+        Google Calendar MCP is not connected, so meeting hours, back-to-back patterns, and meeting types cannot be measured. To unlock this: <strong>claude.ai → Settings → Connectors → Google Calendar</strong> (takes ~2 min). Once connected, re-running this audit will surface your full meeting breakdown, recurring commitments, and deep-work ratio.
+      </div>
+    </div>
+
+    <!-- Email & Communication -->
+    <div class="card" style="margin-bottom: 20px;">
+      <div class="card-title">Email Patterns — Personal Gmail (taun421@gmail.com) · Apr 4 – May 4</div>
+      <div style="margin-bottom: 8px;" class="highlight-box">
+        <strong>Note:</strong> This is your personal Gmail. Work client communication flows through <strong>taun.stewart@gbsbenefits.com</strong> (Outlook). What follows covers habits visible from this account only.
+      </div>
+      <hr class="sub-divider">
+      <div class="grid-2">
+        <div>
+          <div style="font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 10px;">What you send repeatedly</div>
+          <ul class="pattern-list">
+            <li><span class="dot">›</span>Self-sent AI prompts and build instructions (6+ times in April) — used as a clipboard to pass context into Claude sessions</li>
+            <li><span class="dot">›</span>Test emails to a colleague (alysia.french@gbsbenefits.com) — 3 tests on Apr 30, validating something being built</li>
+            <li><span class="dot">›</span>Commission analysis forwarded to work inbox (Apr 8)</li>
+            <li><span class="dot">›</span>Family response emails (low frequency)</li>
+          </ul>
+        </div>
+        <div>
+          <div style="font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 10px;">What fills your inbox</div>
+          <ul class="pattern-list">
+            <li><span class="dot">›</span><strong>Google Alerts (daily)</strong> — "Benefits Broker", "Employee Benefits Consultant", "group benefits", "benefits consultant" — arriving every single day</li>
+            <li><span class="dot">›</span>LinkedIn lead suggestions (45 this week alone)</li>
+            <li><span class="dot">›</span>Amazon order confirmations / shipments (high volume)</li>
+            <li><span class="dot">›</span>Leland AI Builder session recordings — enrolled in structured AI course</li>
+            <li><span class="dot">›</span>Industry newsletters and financial alerts</li>
+          </ul>
+        </div>
+      </div>
+      <hr class="sub-divider">
+      <div class="grid-2" style="margin-top: 4px;">
+        <div>
+          <div style="font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 10px;">What you're being pulled toward</div>
+          <ul class="pattern-list">
+            <li><span class="dot">›</span><strong>SkyWest Airlines benefits tool</strong> (forwarded from work inbox Apr 28) — active client project, large employer (50+ employees)</li>
+            <li><span class="dot">›</span>Industry monitoring via daily Google Alerts — reading but no evidence of acting on them systematically</li>
+          </ul>
+        </div>
+        <div>
+          <div style="font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 10px;">Key accounts / senders</div>
+          <ul class="pattern-list">
+            <li><span class="dot">›</span>alysia.french@gbsbenefits.com — internal colleague being tested on a tool</li>
+            <li><span class="dot">›</span>Leland (builders@joinleland.com) — AI Builder course</li>
+            <li><span class="dot">›</span>Google Alerts (daily, 3-4 topics)</li>
+            <li><span class="dot">›</span>LinkedIn (lead digest weekly)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI Tool Building Activity -->
+    <div class="card">
+      <div class="card-title">AI Tool Building Activity <span class="tag">Strongest signal in the data</span></div>
+      <div class="grid-2">
+        <div>
+          <div style="font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 10px;">What you built / worked on</div>
+          <ul class="pattern-list">
+            <li><span class="dot">›</span><strong>Apr 13–16</strong>: Multiple prompt iterations (subjects "1", "2", "3", "5") — prototyping something in Claude</li>
+            <li><span class="dot">›</span><strong>Apr 17</strong>: Set up OpenClaw + Clawdbot on MyClaw hosting — an AI infrastructure day</li>
+            <li><span class="dot">›</span><strong>Apr 24</strong>: 4 separate builds — Client benefits page, Benefits Page V2, Client plan guide, Quote spreadsheeting</li>
+            <li><span class="dot">›</span><strong>Apr 28</strong>: Voice/content work — healthcare consumer education content</li>
+            <li><span class="dot">›</span><strong>May 2</strong>: Leland AI Builder Level 2, Session 4 completed — Sprint 5 automation scoped, domain knowledge wiki built</li>
+          </ul>
+        </div>
+        <div>
+          <div style="font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 10px;">Tools in use</div>
+          <ul class="pattern-list">
+            <li><span class="dot">›</span><strong>Claude Code</strong> — primary build tool (confirmed by CLAUDE.md)</li>
+            <li><span class="dot">›</span><strong>OpenClaw / Clawdbot</strong> — benefits-oriented AI chatbot platform, being set up for client use</li>
+            <li><span class="dot">›</span><strong>MyClaw.ai</strong> — cloud hosting for Clawdbot deployments</li>
+            <li><span class="dot">›</span><strong>Tiiny Host</strong> — hosting client-facing HTML tools (receipt confirmed May 2)</li>
+            <li><span class="dot">›</span><strong>Leland AI Builder</strong> — structured AI skill-building course (Level 2)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 2: KEY DIAGNOSTICS -->
+  <div class="section" id="diagnostics">
+    <div class="section-header">
+      <div class="section-number">2</div>
+      <div class="section-title">Key Diagnostics</div>
+    </div>
+
+    <div class="grid-4" style="margin-bottom: 24px;">
+      <div class="stat-card">
+        <div class="stat-value stat-yellow">37</div>
+        <div class="stat-label">Peak app switches in a day</div>
+        <div class="stat-note">April 17 — AI infrastructure setup</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value stat-accent">~4</div>
+        <div class="stat-label">Avg Chrome visits / day</div>
+        <div class="stat-note">Suggests native-app-heavy workflow</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value stat-orange">Unknown</div>
+        <div class="stat-label">Meeting load</div>
+        <div class="stat-note">Calendar not connected</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value stat-green">High</div>
+        <div class="stat-label">AI investment signal</div>
+        <div class="stat-note">Course + builds + infra setup</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom: 20px;">
+      <div class="card-title">Context Switching & Attention</div>
+      <div class="diag-row">
+        <div class="diag-icon" style="background: rgba(251,191,36,0.12);">🔀</div>
+        <div>
+          <div class="diag-label">Context Switching Rate</div>
+          <div class="diag-value">April 17 was the highest-switching day visible: 37 browser visits across 8 domains in one morning. All were purposeful (OpenClaw setup), not random distraction. On other days, browser switching is very low (1–5 visits total), but app-level switching in Outlook + Excel is invisible without knowledgeC.db data. <strong>Recommend enabling Full Disk Access to measure this properly.</strong></div>
+        </div>
+      </div>
+      <div class="diag-row">
+        <div class="diag-icon" style="background: rgba(79,142,247,0.12);">📊</div>
+        <div>
+          <div class="diag-label">Meeting Load vs. Deep Work Ratio</div>
+          <div class="diag-value">Cannot be measured without Calendar access. Signal from email: sessions are being protected for build work (Leland AI Builder sessions, Clawdbot setup, Claude builds on Apr 24). These are multi-hour, single-domain blocks — a positive pattern for deep work. However, how much of the calendar is fragmented by meetings with clients and prospects is unknown.</div>
+        </div>
+      </div>
+      <div class="diag-row">
+        <div class="diag-icon" style="background: rgba(52,211,153,0.12);">⚡</div>
+        <div>
+          <div class="diag-label">Reactive vs. Proactive Time Split</div>
+          <div class="diag-value">The Gmail inbox is mostly reactive inputs: daily Google Alerts, LinkedIn leads, Amazon notifications. No evidence of a systematic process to convert these into outbound action. Meanwhile, the builds (Claude, Clawdbot) are proactive. <strong>The ratio appears roughly 60% reactive / 40% proactive</strong> based on email volume vs. build activity, but this is an estimate.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Top 3 Time Drains</div>
+      <div class="diag-row">
+        <div class="diag-icon" style="background: rgba(248,113,113,0.12);">🔔</div>
+        <div>
+          <div class="diag-label">1 · Daily Google Alerts (unprocessed)</div>
+          <div class="diag-value">3–4 alerts arrive daily: "Benefits Broker", "Employee Benefits Consultant", "group benefits", "benefits consultant." That's 60–80 alert emails per month landing in inbox. No evidence of a system to extract leads, insights, or talking points from them — they arrive, get read (maybe), and disappear. This is market intelligence that isn't being converted into pipeline.</div>
+        </div>
+      </div>
+      <div class="diag-row">
+        <div class="diag-icon" style="background: rgba(251,191,36,0.12);">🔁</div>
+        <div>
+          <div class="diag-label">2 · Manual Quote Spreadsheeting</div>
+          <div class="diag-value">A self-sent email on Apr 24 describes spreading UHC quotes side-by-side — this is a recurring benefits consultant task. The email shows it's being done manually, one quote set at a time. For an active book of clients approaching renewals, this could consume hours per week.</div>
+        </div>
+      </div>
+      <div class="diag-row">
+        <div class="diag-icon" style="background: rgba(251,146,60,0.12);">📥</div>
+        <div>
+          <div class="diag-label">3 · LinkedIn Leads — No Follow-Through System</div>
+          <div class="diag-value">LinkedIn is sending 45 lead suggestions this week alone. The inbox receives these, but there's no visible system for reviewing, prioritizing, or acting on them. Without a workflow, lead suggestions become inbox noise rather than pipeline fuel.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Observations -->
+    <div style="margin-top: 24px;">
+      <div style="font-size: 12px; font-weight: 600; color: var(--dim); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 16px;">3 Sharp Observations</div>
+
+      <div class="obs-card">
+        <div class="obs-header">
+          <div class="obs-number">1</div>
+          <div class="obs-title">You're building the right things, but the pipeline isn't being fed yet</div>
+        </div>
+        <div class="obs-body">
+          The April 24 builds (benefits site, plan guide, V2 chatbot, quote spreadsheeting) and the SkyWest benefits tool project are exactly on-strategy. The problem: there's no evidence of systematic outbound use of these tools. LinkedIn is serving leads; Google Alerts are surfacing names and companies — but neither is connected to a workflow that converts them into demos or meetings. The tools exist. The distribution machine doesn't yet.
+        </div>
+      </div>
+
+      <div class="obs-card">
+        <div class="obs-header">
+          <div class="obs-number">2</div>
+          <div class="obs-title">You're using email as a scratchpad — and it's costing you</div>
+        </div>
+        <div class="obs-body">
+          Six self-sent emails in April (subjects: "1", "2", "3", "5", "Lists", "claude contacts") are being used to transfer context into Claude sessions. Numbered prompts sent to yourself on Apr 13–16 suggest rapid iteration, which is good — but routing everything through email adds friction and leaves no persistent knowledge base. The self-sent prompt "Spreadsheeting" (Apr 24) describes a recurring task that should be a template, not a re-typed email every time.
+        </div>
+      </div>
+
+      <div class="obs-card">
+        <div class="obs-header">
+          <div class="obs-number">3</div>
+          <div class="obs-title">Leland AI Builder is structured scaffolding — use it to ship, not just learn</div>
+        </div>
+        <div class="obs-body">
+          Session 4 of AI Builder Level 2 (May 2) completed a Sprint 5 automation spec and domain knowledge wiki. This is high-quality structured time — the course is giving Taun a framework, not just theory. The risk: the gap between "built a spec in a session" and "deployed in front of a prospect" needs to close faster. SkyWest is a live opportunity. The Leland sessions should be shipping toward that goal, not running parallel to it.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 3: GOAL ALIGNMENT -->
+  <div class="section" id="goals">
+    <div class="section-header">
+      <div class="section-number">3</div>
+      <div class="section-title">Goal Alignment</div>
+    </div>
+
+    <div class="goal-row">
+      <div class="goal-row-header">
+        <div class="goal-name">Win new clients by delivering innovative tools (top goal)</div>
+        <div class="goal-alignment-label align-partial">Partial alignment</div>
+      </div>
+      <div class="goal-notes">
+        <strong>What's here:</strong> Active tool builds (benefits page, plan guide, Clawdbot setup), SkyWest engagement, Leland course. The supply side is moving. <br>
+        <strong>What's missing:</strong> No evidence of outbound contact with prospects, follow-up sequences, or demos being sent. LinkedIn leads arrive but no conversion activity is visible. The "delivery" of tools to prospects isn't in the data.
+      </div>
+    </div>
+
+    <div class="goal-row">
+      <div class="goal-row-header">
+        <div class="goal-name">$40k net growth over prior year's same quarter</div>
+        <div class="goal-alignment-label align-unknown">Not measurable</div>
+      </div>
+      <div class="goal-notes">
+        No pipeline, CRM, or commission data accessible. One signal: Commission Analysis email (Apr 8) sent to work inbox suggests active tracking of book performance, which is good. Whether that tracking is driving proactive action is unknown.
+      </div>
+    </div>
+
+    <div class="goal-row">
+      <div class="goal-row-header">
+        <div class="goal-name">At least 1 new client with 50+ employees</div>
+        <div class="goal-alignment-label align-partial">Partial — SkyWest signal</div>
+      </div>
+      <div class="goal-notes">
+        <strong>SkyWest Airlines</strong> is a significant employer (thousands of employees). The "Fw: SkyWest - Benefits Tool" email forwarded from work on Apr 28 suggests an active engagement. This is the most direct evidence of a large-employer opportunity in the data. Its status (prospect vs. client, demo stage vs. close) is unknown without work email access.
+      </div>
+    </div>
+
+    <div class="goal-row">
+      <div class="goal-row-header">
+        <div class="goal-name">Less email triage and manual prospecting</div>
+        <div class="goal-alignment-label align-weak">Not yet reduced</div>
+      </div>
+      <div class="goal-notes">
+        Daily Google Alerts (3-4/day), LinkedIn lead digests, and Amazon notifications are adding inbox volume without a processing system. Self-sent emails as a context-transfer method adds manual overhead. The goal is to reduce this — but currently the volume appears high and unfiltered.
+      </div>
+    </div>
+
+    <div style="margin-top: 20px;" class="card">
+      <div class="card-title">What should be happening but isn't visible in the data</div>
+      <ul class="pattern-list" style="padding: 0;">
+        <li><span class="dot">›</span>Outbound prospect outreach (emails, calls, LinkedIn messages to identified leads)</li>
+        <li><span class="dot">›</span>Demo scheduling for built tools — who has seen the benefits site, Clawdbot, or quote spreadsheeter?</li>
+        <li><span class="dot">›</span>Renewal tracking board — which clients are up for renewal in the next 90 days?</li>
+        <li><span class="dot">›</span>Conversion of Leland session output into deployed tools in front of specific named prospects</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- SECTION 4: AUTOMATION OPPORTUNITIES -->
+  <div class="section" id="automation">
+    <div class="section-header">
+      <div class="section-number">4</div>
+      <div class="section-title">Automation Opportunities <span class="tag draft">Draft</span></div>
+    </div>
+    <p style="color: var(--muted); font-size: 13px; margin-bottom: 24px;">Ranked by: hours reclaimed × how directly it ties to winning new clients. All estimates are drafts.</p>
+
+    <!-- Card 1 -->
+    <div class="auto-card quick">
+      <div class="auto-card-header">
+        <div>
+          <div class="auto-rank-badge">#1 — Highest impact</div>
+        </div>
+        <div class="auto-badges">
+          <span class="effort-badge effort-quick">Quick Win</span>
+          <span class="hours-badge">~3 hrs/week reclaimed</span>
+        </div>
+      </div>
+      <div class="auto-outcome">LinkedIn leads are worked without you thinking about it.</div>
+      <div class="auto-grid">
+        <div class="auto-field">
+          <div class="auto-field-label">What's happening today</div>
+          <div class="auto-field-text">LinkedIn sends 45+ lead suggestions per week. They land in inbox, get reviewed manually (if at all), and mostly go unworked. No outreach follows automatically — each contact requires you to notice, decide, and write a message.</div>
+        </div>
+        <div class="auto-field">
+          <div class="auto-field-label">What the automated version looks like</div>
+          <div class="auto-field-text">A weekly Claude agent reviews lead suggestions, scores by company size and fit (50+ employees, industries you serve), drafts personalized first-touch LinkedIn messages referencing a specific tool you've built, and queues them for your 30-second review + send. You approve, not compose.</div>
+        </div>
+        <div class="auto-field">
+          <div class="auto-field-label">Trigger / output</div>
+          <div class="auto-field-text">Trigger: Monday morning weekly batch. Output: 5–10 approved-ready outreach drafts in your inbox, with a one-line note on why each was selected.</div>
+        </div>
+        <div class="auto-field">
+          <div class="auto-field-label">Why this is #1</div>
+          <div class="auto-field-text">New client acquisition is your top goal. Leads are already arriving — they just aren't being converted. This builds the pipeline directly, with tools you're already building as the hook.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="auto-card quick">
+      <div class="auto-card-header">
+        <div>
+          <div class="auto-rank-badge">#2</div>
+        </div>
+        <div class="auto-badges">
+          <span class="effort-badge effort-quick">Quick Win</span>
+          <span class="hours-badge">~2 hrs/week reclaimed</span>
+        </div>
+      </div>
+      <div class="auto-outcome">Google Alerts become a weekly prospect intelligence brief — not inbox noise.</div>
+      <div class="auto-grid">
+        <div class="auto-field">
+          <div class="auto-field-label">What's happening today</div>
+          <div class="auto-field-text">3–4 Google Alert emails arrive daily across "Benefits Broker", "group benefits", "Employee Benefits Consultant" topics — ~80 emails/month. They're read (maybe) and deleted. No system extracts named companies, relevant news, or talking points.</div>
+        </div>
+        <div class="auto-field">
+          <div class="auto-field-label">What the automated version looks like</div>
+          <div class="auto-field-text">A Friday Claude agent reads that week's Google Alerts, extracts: (1) companies mentioned as hiring benefits consultants or switching brokers, (2) industry talking points you can use in prospect emails, (3) one "news hook" to open a cold outreach email. Delivered as a single weekly brief.</div>
+        </div>
+        <div class="auto-field">
+          <div class="auto-field-label">Trigger / output</div>
+          <div class="auto-field-text">Trigger: Friday at 4pm (or on-demand). Output: 1-page brief — top 3 prospect signals, 2 talking points, 1 news hook ready to paste.</div>
+        </div>
+        <div class="auto-field">
+          <div class="auto-field-label">Why this matters</div>
+          <div class="auto-field-text">You're already investing time reading these alerts. This converts passive reading into active pipeline intelligence with near-zero additional effort.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="auto-card medium">
+      <div class="auto-card-header">
+        <div>
+          <div class="auto-rank-badge">#3</div>
+        </div>
+        <div class="auto-badges">
+          <span class="effort-badge effort-medium">Medium Lift</span>
+          <span class="hours-badge">~3–4 hrs/week reclaimed</span>
+        </div>
+      </div>
+      <div class="auto-outcome">Quote spreadsheeting for renewals happens in minutes, not hours.</div>
+      <div class="auto-grid">
+        <div class="auto-field">
+          <div class="auto-field-label">What's happening today</div>
+          <div class="auto-field-text">When a carrier sends renewal quotes (like the UHC quotes referenced in your Apr 24 email), you manually lay them out side-by-side in the format clients expect. This is a recurring task across your entire book, happening every renewal cycle.</div>
+        </div>
+        <div class="auto-field">
+          <div class="auto-field-label">What the automated version looks like</div>
+          <div class="auto-field-text">A Claude agent takes attached carrier quote PDFs, extracts plan details, and auto-populates a comparison spreadsheet in your exact preferred format. You review for accuracy, then send. The skill you're already building (the "lifedisabilityspreadsheeting" skill) is most of the way there.</div>
+        </div>
+        <div class="auto-field">
+          <div class="auto-field-label">Trigger / output</div>
+          <div class="auto-field-text">Trigger: you forward a carrier quote PDF to a Claude agent or drop it in a folder. Output: populated comparison spreadsheet ready for client review.</div>
+        </div>
+        <div class="auto-field">
+          <div class="auto-field-label">Effort note</div>
+          <div class="auto-field-text">Template and parser need to be built once per carrier format. You've already started this with the UHC spreadsheeting prompt — completing it would unlock a repeatable tool.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="auto-card medium">
+      <div class="auto-card-header">
+        <div>
+          <div class="auto-rank-badge">#4</div>
+        </div>
+        <div class="auto-badges">
+          <span class="effort-badge effort-medium">Medium Lift</span>
+          <span class="hours-badge">~2 hrs/week reclaimed</span>
+        </div>
+      </div>
+      <div class="auto-outcome">Client follow-up after a demo or quote presentation happens without you remembering to do it.</div>
+      <div class="auto-grid">
+        <div class="auto-field">
+          <div class="auto-field-label">What's happening today</div>
+          <div class="auto-field-text">After sending a prospect a tool demo or quote comparison, follow-up depends on memory. No CRM is visible in the data. SkyWest, for example — what's the next step, and is there a date attached to it?</div>
+        </div>
+        <div class="auto-field">
+          <div class="auto-field-label">What the automated version looks like</div>
+          <div class="auto-field-text">When you email a prospect a tool or quote (work Outlook), a Claude agent logs the contact, drafts a follow-up email for 3 days later, and surfaces it for your approval. Requires work email integration. Could be built on top of Outlook + Claude.</div>
+        </div>
+        <div class="auto-field">
+          <div class="auto-field-label">Trigger / output</div>
+          <div class="auto-field-text">Trigger: you send a prospect email with an attachment or tool link. Output: a follow-up draft queued for your review 3 days later.</div>
+        </div>
+        <div class="auto-field">
+          <div class="auto-field-label">Dependency</div>
+          <div class="auto-field-text">Needs work email (Outlook) connected. Once that's in place, this becomes a Quick Win — the logic is simple, the template is reusable.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="auto-card big">
+      <div class="auto-card-header">
+        <div>
+          <div class="auto-rank-badge">#5</div>
+        </div>
+        <div class="auto-badges">
+          <span class="effort-badge effort-big">Big Build</span>
+          <span class="hours-badge">~4–5 hrs/week reclaimed</span>
+        </div>
+      </div>
+      <div class="auto-outcome">Every prospect gets a personalized benefits tool demo before the first meeting.</div>
+      <div class="auto-grid">
+        <div class="auto-field">
+          <div class="auto-field-label">What's happening today</div>
+          <div class="auto-field-text">Building each client benefits site (like the Apr 24 work: benefits page, V2 chatbot, plan guide) takes multiple hours per client and requires manual customization in Claude. It's done after engagement begins, not as a door-opener.</div>
+        </div>
+        <div class="auto-field">
+          <div class="auto-field-label">What the automated version looks like</div>
+          <div class="auto-field-text">A prospect intake form captures company name, industry, size, and current benefits. Claude auto-generates a branded sample benefits microsite (using your existing skills) and sends it as the first outreach follow-up. The tool IS the pitch — before you've had a single call.</div>
+        </div>
+        <div class="auto-field">
+          <div class="auto-field-label">Trigger / output</div>
+          <div class="auto-field-text">Trigger: prospect's name + company entered into intake form. Output: branded HTML benefits microsite generated in under 5 minutes, shareable link created via Tiiny Host.</div>
+        </div>
+        <div class="auto-field">
+          <div class="auto-field-label">Why this is the big one</div>
+          <div class="auto-field-text">This is the "tools as differentiator" goal fully realized. No other broker can do this at speed. Requires: intake form, Claude build pipeline, Tiiny Host deployment, and one strong template. Your Leland Sprint 5 may already be targeting this.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 6 -->
+    <div class="auto-card">
+      <div class="auto-card-header">
+        <div>
+          <div class="auto-rank-badge">#6</div>
+        </div>
+        <div class="auto-badges">
+          <span class="effort-badge effort-quick">Quick Win</span>
+          <span class="hours-badge">~1 hr/week reclaimed</span>
+        </div>
+      </div>
+      <div class="auto-outcome">Your Gmail inbox is pre-sorted every morning — only work-relevant items surface.</div>
+      <div class="auto-grid">
+        <div class="auto-field">
+          <div class="auto-field-label">What's happening today</div>
+          <div class="auto-field-text">Amazon shipments, Ogden Clinic messages, SONIC rewards, utility bills, and grocery pickup confirmations arrive in the same inbox as LinkedIn leads and industry alerts. Scanning to find what matters costs micro-time daily that adds up.</div>
+        </div>
+        <div class="auto-field">
+          <div class="auto-field-label">What the automated version looks like</div>
+          <div class="auto-field-text">Gmail filters route personal/transactional email (Amazon, grocery, medical, utilities) to labeled folders automatically. A morning Claude agent surfaces the 3 items that need attention. You open Gmail to a clean, prioritized view — not a wall of delivery notifications.</div>
+        </div>
+        <div class="auto-field">
+          <div class="auto-field-label">Trigger / output</div>
+          <div class="auto-field-text">Trigger: 7am daily. Output: 3-line digest of inbox items requiring action, everything else pre-sorted to labeled folders.</div>
+        </div>
+        <div class="auto-field">
+          <div class="auto-field-label">Effort note</div>
+          <div class="auto-field-text">The filtering rules can be set up in Gmail in 20 minutes. The morning digest can be added to the Google Alerts summary agent (#2 above). Bundle them.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 5: DATA SOURCES -->
+  <div class="section" id="sources">
+    <div class="section-header">
+      <div class="section-number">5</div>
+      <div class="section-title">Data Sources Used</div>
+    </div>
+    <div class="card">
+      <div class="source-row">
+        <div class="source-status status-ok"></div>
+        <div class="source-name">Gmail (personal)</div>
+        <div class="source-detail">taun421@gmail.com · Apr 4 – May 4, 2026 · 50 threads sent, 50 threads inbox analyzed via Gmail MCP</div>
+      </div>
+      <div class="source-row">
+        <div class="source-status status-ok"></div>
+        <div class="source-name">Chrome Browser History</div>
+        <div class="source-detail">Default profile · Apr 10 – May 3, 2026 · 97 visit records · sparse, most activity in native apps</div>
+      </div>
+      <div class="source-row">
+        <div class="source-status status-ok"></div>
+        <div class="source-name">CLAUDE.md</div>
+        <div class="source-detail">~/Desktop/Claude/CLAUDE.md · role, goals, priorities used as analysis lens</div>
+      </div>
+      <div class="source-row">
+        <div class="source-status status-blocked"></div>
+        <div class="source-name">Mac App Usage</div>
+        <div class="source-detail">BLOCKED — ~/Library/Application Support/Knowledge/knowledgeC.db requires Full Disk Access. Fix: System Settings → Privacy & Security → Full Disk Access → Terminal</div>
+      </div>
+      <div class="source-row">
+        <div class="source-status status-missing"></div>
+        <div class="source-name">Work Email (Outlook)</div>
+        <div class="source-detail">NOT CONNECTED — taun.stewart@gbsbenefits.com. All client communication, renewals, and quote requests live here. Connect via Outlook MCP or Gmail MCP if mail is forwarded.</div>
+      </div>
+      <div class="source-row">
+        <div class="source-status status-missing"></div>
+        <div class="source-name">Google Calendar</div>
+        <div class="source-detail">NOT CONNECTED — meeting load, deep-work ratio, and back-to-back patterns cannot be measured. Connect: claude.ai → Settings → Connectors → Google Calendar</div>
+      </div>
+      <div class="source-row">
+        <div class="source-status status-missing"></div>
+        <div class="source-name">Slack</div>
+        <div class="source-detail">NOT CONNECTED — CLAUDE.md confirms no MCP connectors installed yet</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  Time Audit — May 4, 2026 &nbsp;|&nbsp; Part of my AI Builder Automation Portfolio &nbsp;|&nbsp; Taun Stewart · GBS Benefits
+</div>
+
+</body>
+</html>
