@@ -382,11 +382,156 @@
     }
     .footer-dot { color: rgba(255,255,255,0.2); margin: 0 8px; }
 
+    /* ─── SPRINT 2 DELIVERABLES ─── */
+    .s2-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 48px;
+    }
+    .s2-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-top: 3px solid var(--color-accent);
+      padding: 32px 28px;
+      display: flex;
+      flex-direction: column;
+    }
+    .s2-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .s2-build-label {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 13px;
+      letter-spacing: 1px;
+      color: var(--color-accent);
+    }
+    .s2-status-badge {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #10b981;
+      background: rgba(16,185,129,0.1);
+      border: 1px solid rgba(16,185,129,0.25);
+      padding: 3px 10px;
+    }
+    .s2-card-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 300;
+      color: var(--color-white);
+      line-height: 1.25;
+      margin-bottom: 12px;
+    }
+    .s2-card-desc {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      color: var(--color-text-muted);
+      line-height: 1.65;
+      margin-bottom: 20px;
+      flex: 1;
+    }
+    .s2-card-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 20px;
+    }
+    .s2-tag {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 3px 10px;
+    }
+    .s2-card-footer {
+      border-top: 1px solid rgba(255,255,255,0.07);
+      padding-top: 16px;
+      margin-top: auto;
+    }
+    .s2-link {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      color: var(--color-accent);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .s2-link:hover { color: var(--color-accent-hover); }
+    .s2-link-muted {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.3);
+      letter-spacing: 0.3px;
+    }
+    .s2-live-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 40px;
+      padding-top: 36px;
+      border-top: 1px solid rgba(255,255,255,0.07);
+    }
+    .s2-live-item {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .s2-live-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: rgba(255,255,255,0.3);
+    }
+    .s2-live-link {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--color-accent);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .s2-live-link:hover { color: var(--color-accent-hover); }
+
+    /* Sprint done state */
+    .sprint-card--done {
+      opacity: 1;
+      border-color: rgba(224,88,28,0.3);
+      background: rgba(224,88,28,0.05);
+    }
+    .sprint-card--done .sprint-label { color: var(--color-accent); }
+    .sprint-card--done .sprint-title { color: rgba(255,255,255,0.8); }
+    .sprint-done-badge {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #10b981;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      padding-top: 14px;
+    }
+
     @media (max-width: 960px) {
       .insights-grid { grid-template-columns: 1fr; }
       .cards-grid { grid-template-columns: 1fr; }
       .sprints-grid { grid-template-columns: 1fr 1fr; }
       .auto-fields { grid-template-columns: 1fr; }
+      .s2-grid { grid-template-columns: 1fr; }
+      .s2-live-strip { grid-template-columns: 1fr; gap: 20px; }
     }
     @media (max-width: 768px) {
       :root { --pad-h: 24px; --pad-v-sm: 56px; --pad-v-lg: 72px; }
@@ -635,6 +780,106 @@
 </section>
 
 <!-- ══════════════════════════════════════
+     SPRINT 2 DELIVERABLES
+══════════════════════════════════════ -->
+<section class="section--dark">
+  <div class="container">
+    <span class="eyebrow">Sprint 2 · Complete</span>
+    <h2 class="headline-section" style="color:var(--color-white); max-width:560px;">
+      What We Shipped
+    </h2>
+    <div class="divider"></div>
+    <p style="color:var(--color-text-muted); font-size:15px; max-width:520px; margin-top:-8px;">
+      Three tools built, wired together, and deployed to production in a single session.
+    </p>
+
+    <div class="s2-grid">
+
+      <!-- BUILD 01 -->
+      <div class="s2-card">
+        <div class="s2-card-header">
+          <span class="s2-build-label">Build 01</span>
+          <span class="s2-status-badge">Shipped</span>
+        </div>
+        <div class="s2-card-title">Live Automation Dashboard</div>
+        <div class="s2-card-desc">
+          8 automation ideas organized into a drag-and-drop Kanban board across four columns: Suggested, To Build, In Progress, and Done. Cards are clickable for editing scope, priority, and notes. Status changes write to Notion in real time — no manual sync needed.
+        </div>
+        <div class="s2-card-meta">
+          <span class="s2-tag">HTML5 Drag-and-Drop</span>
+          <span class="s2-tag">Modal Editor</span>
+          <span class="s2-tag">Notion API</span>
+          <span class="s2-tag">Vercel</span>
+        </div>
+        <div class="s2-card-footer">
+          <a href="https://ai-builder-blush.vercel.app/ai-builder-dashboard.html" class="s2-link" target="_blank">View Dashboard →</a>
+        </div>
+      </div>
+
+      <!-- BUILD 02 -->
+      <div class="s2-card">
+        <div class="s2-card-header">
+          <span class="s2-build-label">Build 02</span>
+          <span class="s2-status-badge">Shipped</span>
+        </div>
+        <div class="s2-card-title">Notion Automation Roadmap</div>
+        <div class="s2-card-desc">
+          A Notion database storing all 8 automations with Name, Status, Priority, and Description columns. Wired live to the dashboard via a Vercel serverless API function. Drag a card to Done in the dashboard — the Notion row updates automatically. Single source of truth.
+        </div>
+        <div class="s2-card-meta">
+          <span class="s2-tag">Notion Database</span>
+          <span class="s2-tag">Serverless Function</span>
+          <span class="s2-tag">@notionhq/client</span>
+          <span class="s2-tag">Live Sync</span>
+        </div>
+        <div class="s2-card-footer">
+          <span class="s2-link-muted">Syncs on every card move</span>
+        </div>
+      </div>
+
+      <!-- BUILD 03 -->
+      <div class="s2-card">
+        <div class="s2-card-header">
+          <span class="s2-build-label">Build 03</span>
+          <span class="s2-status-badge">Shipped</span>
+        </div>
+        <div class="s2-card-title">Automation Advisor Agent</div>
+        <div class="s2-card-desc">
+          A Claude Code skill with three modes. Roadmap Check reads the live Notion database and returns a 60-second briefing: what to prioritize, what's stalled, and one automation to add next. Work Retrospective scans Claude session history to surface what was actually built. Build Planner runs a 4-step interview to scope and document a new automation.
+        </div>
+        <div class="s2-card-meta">
+          <span class="s2-tag">Claude Code Skill</span>
+          <span class="s2-tag">Notion MCP</span>
+          <span class="s2-tag">Parallel Agents</span>
+          <span class="s2-tag">Session Search</span>
+        </div>
+        <div class="s2-card-footer">
+          <span class="s2-link-muted">Run <code style="font-size:11px; color:rgba(255,255,255,0.5); background:rgba(255,255,255,0.07); padding:2px 7px;">/automation-advisor</code> in Claude Code</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Live URLs -->
+    <div class="s2-live-strip">
+      <div class="s2-live-item">
+        <div class="s2-live-label">Time Audit</div>
+        <a href="https://ai-builder-blush.vercel.app/time-audit.html" class="s2-live-link" target="_blank">ai-builder-blush.vercel.app/time-audit.html</a>
+      </div>
+      <div class="s2-live-item">
+        <div class="s2-live-label">Automation Plan</div>
+        <a href="https://ai-builder-blush.vercel.app/ai-builder-plan.html" class="s2-live-link" target="_blank">ai-builder-blush.vercel.app/ai-builder-plan.html</a>
+      </div>
+      <div class="s2-live-item">
+        <div class="s2-live-label">Kanban Dashboard</div>
+        <a href="https://ai-builder-blush.vercel.app/ai-builder-dashboard.html" class="s2-live-link" target="_blank">ai-builder-blush.vercel.app/ai-builder-dashboard.html</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
      MY SYSTEM — SPRINT PIPELINE
 ══════════════════════════════════════ -->
 <section class="section--dark">
@@ -650,10 +895,10 @@
 
     <div class="sprints-grid">
 
-      <div class="sprint-card">
+      <div class="sprint-card sprint-card--done">
         <div class="sprint-label">S2</div>
-        <div class="sprint-title">Deployed Website + Data Collection Tool</div>
-        <div class="sprint-coming">Coming in Sprint 2</div>
+        <div class="sprint-title">Dashboard · Notion Backend · Advisor Agent</div>
+        <div class="sprint-done-badge">Complete</div>
       </div>
 
       <div class="sprint-card">
